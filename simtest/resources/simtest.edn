@@ -1,0 +1,155 @@
+;;   Copyright (c) Cognitect, Inc. All rights reserved.
+;;   The use and distribution terms for this software are covered by the
+;;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;;   which can be found in the file epl-v10.html at the root of this distribution.
+;;   By using this software in any fashion, you are agreeing to be bound by
+;;   the terms of this license.
+;;   You must not remove this notice, or any other, from this software.
+
+{:core-schema
+ [[{:db/id                 #db/id[:db.part/db]
+    :db/ident              :agent/email-address
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "An RFC 822 email address, stored as a string."
+    :db.install/_attribute :db.part/db
+    :schema/version        1}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :model/name
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db/unique             :db.unique/value
+    :db/doc                "A unique name that describes the model."
+    :db.install/_attribute :db.part/db
+    :schema/version        4}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :test/visitor-count
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The number of visitors for a particular test"
+    :db.install/_attribute :db.part/db
+    :schema/version        1}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :search-engine-arrival-rate
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The percentage of visitors arriving from a search engine. Should be in the range 1 - 100."
+    :db.install/_attribute :db.part/db
+    :schema/version        2}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :internal-search-rate
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The percentage of visitors who use the site search feature. Should be in the range 1 - 100."
+    :db.install/_attribute :db.part/db
+    :schema/version        2}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :search-success-rate
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The percentage of searchers who find the item they seek. Should be in the range 1 - 100."
+    :db.install/_attribute :db.part/db
+    :schema/version        2}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :start-checkout-rate
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The percentage of viewers who move into the checkout process. Should be in the range 1 - 100."
+    :db.install/_attribute :db.part/db
+    :schema/version        2}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :abandon-rate
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The percentage of visitors who leave after a page view. Should be in the range 1 - 100."
+    :db.install/_attribute :db.part/db
+    :schema/version        2}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :page/type
+    :db/valueType          :db.type/ref
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The class of page requested"
+    :db.install/_attribute :db.part/db
+    :schema/version        5}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :sku
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "A product identifier"
+    :db.install/_attribute :db.part/db
+    :schema/version        9}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :category
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "A category identifier"
+    :db.install/_attribute :db.part/db
+    :schema/version        9}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :product-pareto-index
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The Pareto distribution shape parameter that determines how much traffic is concentrated on hit items"
+    :db.install/_attribute :db.part/db
+    :schema/version        8}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :category-pareto-index
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db/doc                "The Pareto distribution shape parameter that determines how much traffic is concentrated on hit categories"
+    :db.install/_attribute :db.part/db
+    :schema/version        8}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :model.type/shopping
+    :schema/version        1}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :test.type/shopping
+    :schema/version        1}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :agent.type/shopper
+    :schema/version        1}
+
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :action.type/start-session
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :action.type/page-request
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :action.type/process-enter
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :action.type/abandon-session
+    :schema/version        7}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :action.type/abandon-checkout
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :action.type/purchase-confirm
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :category
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :product-page
+    :schema/version        6}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :home
+    :schema/version        3}
+   {:db/id                 #db/id[:db.part/db]
+    :db/ident              :checkout
+    :schema/version        3}
+   {:db/id                 #db/id[:test]
+    :db/ident              :search
+    :schema/version        3}]]}
