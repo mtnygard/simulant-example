@@ -11,57 +11,6 @@
   (:import [org.apache.commons.math3.distribution ParetoDistribution]))
 
 ; ----------------------------------------
-; Generators
-; ----------------------------------------
-(def ^:private tlds ["com" "mil" "gov" "net" "org" "info" "de" "co.uk" "co.au" "ca" "fi"])
-
-(def email-address-parts #(gen/uniform 2 5))
-(def email-part-sizer    #(gen/uniform 3 30))
-
-(defn email-address
-  "Create a random email address. This does _not_ explore all possible RFC 822
-   formats, only a simplified subset of interesting cases."
-  []
-  (let [parts (reverse
-               (cons (gen/rand-nth tlds)
-                     (take (email-address-parts)
-                           (repeatedly #(gen/symbol email-part-sizer)))))
-        separators (cons \@ (repeat 5 \.))]
-    (string/join (butlast (interleave parts separators)))))
-
-; ----------------------------------------
-; Create Pareto-distributed products & cats
-; ----------------------------------------
-(defn pareto
-  [scale shape]
-  (let [d (ParetoDistribution. scale shape)]
-    (fn [] (.sample d))))
-
-(defn sampler
-  [dist coll]
-  (let [size (dec (count coll))]
-    (fn []
-      (nth coll (long (min (dist) size))))))
-
-(defn ingest
-  [f]
-  (-> f
-      io/resource
-      io/reader
-      slurp
-      edn/read-string))
-
-(defn category-sampler
-  [{:keys [category-pareto-index]}]
-  (sampler (pareto 1 category-pareto-index)
-           (ingest "shop/category.edn")))
-
-(defn product-sampler
-  [{:keys [product-pareto-index]}]
-  (sampler (pareto 1 product-pareto-index)
-           (ingest "shop/sku.edn")))
-
-; ----------------------------------------
 ; Actions for a single event stream
 ; ----------------------------------------
 (defn- action
