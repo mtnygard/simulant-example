@@ -11,6 +11,9 @@ a REPL.
 This depends on Datomic Free. With a minor change to project.clj, it
 will work with Datomic Pro as well.
 
+Everything interesting is under the `simtest` directory. You should cd
+into it right away.
+
 # Walkthrough
 
 1. Start Datomic with          `scripts/start-transactor.sh`
