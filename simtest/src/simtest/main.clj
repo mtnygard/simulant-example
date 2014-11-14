@@ -9,10 +9,12 @@
 (defn dot [a]
   (send-off output prflush
             (cond
+             (< 25 (count a))    \*
              (< 15 (count a))    \#
              (< 10 (count a) 16) \+
              (< 5 (count a) 11)  \-
-             :else               \.)))
+             :else               \.))
+  a)
 
 (defn error [reason detail] {:result :error :reason reason :detail detail})
 
@@ -23,7 +25,7 @@
          (for [r reasons]
            `(def ~(symbol (name r)) (partial error ~r)))))
 
-(error-generators :argument-error :missing-model :missing-resource :transaction-exception :required-argument)
+(error-generators :argument-error :missing-model :missing-resource :transaction-error :required-argument)
 
 (defn print-errors
   "Replace this with a hook into your preferred logging framework."

@@ -77,8 +77,8 @@
    uses the model to generate a sequence of states, which
    we turn into actions using the actions-for-state multimethod."
   [model test agent]
-  (mapcat (partial actions-for-state model agent)
-          (model/state-sequence model (:test/duration test))))
+  (into [] (mapcat (partial actions-for-state model agent)
+                   (model/state-sequence model (:test/duration test)))))
 
 ; ----------------------------------------
 ; Make a population of agents
@@ -93,20 +93,21 @@
     :product-sampler (model/product-sampler model)
     :category-sampler (model/category-sampler model)))
 
-(defn- all-agents
-  "Create a stream of datomic entities for the agents.
+(defn- create-agent
+  "Create a Datomic entity map for a single agent, along with its
+   activity stream.
+
    For this example, all agents are the same type: a shopper.
-   This function attaches the activity streams for the agents, but
+   This function attaches the activity stream for the agent, but
    take note that the data structure here is just a list of maps.
    The activity streams are related by the :db/id included in each
    map."
-  [model test]
-  (for [db-id (repeatedly (:test/visitor-count test) #(d/tempid :test))]
-    (let [a {:db/id               db-id
-             :agent/type          :agent.type/shopper
-             :agent/email-address (model/email-address)
-             :test/_agents        (u/e test)}]
-      (concat [a] (agent-actions model test a)))))
+  [model test db-id]
+  (let [a {:db/id               db-id
+           :agent/type          :agent.type/shopper
+           :agent/email-address (model/email-address)
+           :test/_agents        (u/e test)}]
+    (conj (agent-actions model test a) a)))
 
 (defn- test-instance
   "Build a test instance from a model and a test definition.
@@ -125,17 +126,25 @@
   [model]
   (into {} (d/touch model)))
 
+
+;; This is the callback from Simulant to create a test. A
+;; test defines the agents and their activity streams
 (defmethod sim/create-test :model.type/shopping
-  "This is the callback from Simulant to create a test. A
-   test defines the agents and their activity streams."
   [conn model test-def]
   (let [test       (test-instance model test-def)
         test-txr   (d/transact conn [test])
+        test-real  (u/tx-ent @test-txr (u/e test))
         model      (-> model model-parameters attach-samplers)]
-    (doseq [a (all-agents model test)]
-      (m/dot a)
-      @(d/transact-async conn a))
-    (u/tx-ent @test-txr (u/e test))))
+    (doseq [agent-id (repeatedly (:test/visitor-count test) #(d/tempid :test))]
+      @(d/transact conn (m/dot (create-agent model test-real agent-id))))
+    test-real))
+
+(defn empty-test
+  [{:keys [number-of-visitors test-duration] :or
+    {number-of-visitors 10000 test-duration 10}}]
+  {:db/id              (d/tempid :test)
+   :test/visitor-count number-of-visitors
+   :test/duration      (* 1000 60 test-duration)})
 
 ;; ----------------------------------------
 ;; CLI
@@ -151,41 +160,27 @@
   database. The maps have string keys so they are easy to print. Don't
   use this for executions."
   [db]
-  (d/q '[:find ?ttn ?tt ?mnn ?mn ?idn ?tid ?agtn (count ?agts)
-         :in $ ?ttn     ?mnn     ?idn      ?agtn
+  (d/q '[:find ?ttn ?tt ?idn ?id  ?mnn ?mn ?durn ?dur ?agtn (count ?agt)
+         :in $ ?ttn     ?idn      ?mnn     ?durn      ?agtn
          :where
-         [?id :test/type ?tid]
-         [?tid :db/ident ?tt]
-         [?id :model/name ?mn]
-         [?id :test/agents ?agts]]
-       db "Type" "Model Name" "DB ID" "# Agents"))
+         [?id  :test/type ?x]
+         [?x   :db/ident ?tt]
+         [?id  :test/agents ?agt]
+         [?id  :test/duration ?dur]
+         [?mid :model/tests ?id]
+         [?mid :model/name  ?mn]]
+       db "Type" "DB ID" "Model Name" "Duration" "# Agents"))
 
 (defmethod m/run-command :make-activity
-  "As invoked from the command line, make a new activity stream."
-  [_
-   {datomic-uri        :datomic-uri
-    number-of-visitors :number-of-visitors
-    duration           :test-duration
-    model-name         :model-name :as opts}
-   arguments]
-  (if-not number-of-visitors
-    (m/required-argument :number-of-visitors)
-    (if-not duration
-      (m/required-argument :duration)
-      (let [conn            (d/connect datomic-uri)
-            test-definition {:db/id (d/tempid :test)
-                             :test/visitor-count number-of-visitors
-                             :test/duration      (* 1000 60 duration)}
-            model           (model-for-name (d/db conn) model-name)]
-        (if model
-          (do
-            (sim/create-test conn model test-definition)
-            :ok)
-          (m/missing-model (str "Model " model-name " must exist to create a test.")))))))
+  [_ {:keys [datomic-uri model-name] :as opts} arguments]
+  (let [conn  (d/connect datomic-uri)]
+    (if-let [model (model-for-name (d/db conn) model-name)]
+      (do
+        (sim/create-test conn model (empty-test opts))
+        :ok)
+      (m/missing-model (str "Model " model-name " must exist to create a test.")))))
 
 (defmethod m/run-command :list-activities
-  "As invoked from the command line, list activity streams in the
-  database."
   [_ {:keys [datomic-uri] :as opts} arguments]
   (let [conn (d/connect datomic-uri)
         acts (query-activities (d/db conn))]

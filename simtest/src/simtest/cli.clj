@@ -31,7 +31,7 @@
         "Actions:"
         "install-schema       One-time database setup"
         "make-model           Create a model with default parameters"
-        "set-model-parameter  Adjust a model parameter"
+        "set-model-parameter  Adjust a model parameter. Requires parameter name and value as args."
         "list-models          View models in the database"
         "make-activity        Create an activity stream"
         "list-activities      Show activity streams in the database"
@@ -54,27 +54,31 @@
   (exit 1 (error-msg ["No such action"])))
 
 (defn execute-and-exit
-  [namespace command options arguments]
+  [namespace command options arguments summary]
   (require namespace)
   (let [res (m/run-command command options arguments)]
-    (exit (if (= :ok res) 0 1) res)))
+    (case res
+      :ok    (exit 0 res)
+      :usage (exit 1 (usage summary))
+      (exit -1 (str "Unknown return value " res)))))
 
 (def command->namespace
-  {"install-schema"      'simtest.database
-   "make-model"          'simtest.model
-   "set-model-parameter" 'simtest.model
-   "list-models"         'simtest.model
-   "make-activity"       'simtest.generator
-   "list-activities"     'simtest.generator
-   "run-test"            'simtest.executor})
+  {"install-schema"        'simtest.database
+   "make-model"            'simtest.model
+   "set-model-parameter"   'simtest.model
+   "list-model-parameters" 'simtest.model
+   "list-models"           'simtest.model
+   "make-activity"         'simtest.generator
+   "list-activities"       'simtest.generator
+   "run-test"              'simtest.executor})
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (cond
-     (:help options)            (exit 0 (usage summary))
-     (not= (count arguments) 1) (exit 1 (usage summary))
-     errors                     (exit 1 (error-msg errors))
+     (:help options)         (exit 0 (usage summary))
+     (< (count arguments) 1) (exit 1 (usage summary))
+     errors                  (exit 1 (error-msg errors))
      :else
      (if-let [that-ns (command->namespace (first arguments))]
-       (execute-and-exit that-ns (keyword (first arguments)) options arguments)
+       (execute-and-exit that-ns (keyword (first arguments)) options arguments summary)
        (exit 1 (usage summary))))))

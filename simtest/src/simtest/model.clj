@@ -222,7 +222,6 @@
     (keyword s)))
 
 (defmethod m/run-command :make-model
-  "As invoked from the command line, make a new model."
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
   (if (empty? model-name)
     (m/argument-error (str "make-model requires a model name parameter"))
@@ -231,15 +230,12 @@
       :ok)))
 
 (defmethod m/run-command :list-models
-  "As invoked from the command line, list models in the database"
   [_ {:keys [datomic-uri] :as opts} arguments]
   (let [conn (d/connect datomic-uri)]
     (pprint/print-table (map (partial apply hash-map) (query-models (d/db conn))))
     :ok))
 
 (defmethod m/run-command :list-model-parameters
-  "As invoked from the command line, list the parameters and values
-  for a model in the database."
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
   (let [conn      (d/connect datomic-uri)
         model     (model-for-name (d/db conn) model-name)]
@@ -252,11 +248,10 @@
       (m/argument-error (str "Model named '" model-name "' not found")))))
 
 (defmethod m/run-command :set-model-parameter
-  "As invoked from the command line, set the value of a parameter in
-  the database to the given value for the given model."
-  [_ {:keys [datomic-uri model-name] :as opts} arguments]
+  [_ {:keys [datomic-uri model-name] :as opts} [_ parameter-name parameter-value]]
   (let [conn       (d/connect datomic-uri)
         model      (model-for-name (d/db conn) model-name)
-        parameter  (keywordize (first arguments))
-        value      (Long/parseLong (second arguments))]
-    @(d/transact conn [[:db/add (:db/id model) parameter value]])))
+        parameter  (keywordize parameter-name)
+        value      (Long/parseLong parameter-value)]
+    @(d/transact conn [[:db/add (:db/id model) parameter value]])
+    :ok))

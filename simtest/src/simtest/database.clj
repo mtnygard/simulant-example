@@ -78,8 +78,6 @@
           (load-schemata! conn schema-definition)))))
 
 (defmethod m/run-command :install-schema
-  "As invoked from the command line, perform the one-time schema
-  installation in a new database."
   [_ {datomic-uri :datomic-uri} arguments]
   (let [outcome (bootstrap! datomic-uri)]
     (if (every? #(= :ok %) (map :result (flatten outcome)))
