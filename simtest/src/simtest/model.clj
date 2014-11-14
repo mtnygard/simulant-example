@@ -1,11 +1,23 @@
 (ns simtest.model
   "Activity stream model"
   (:require [causatum.event-streams :as es]
-            [clojure.pprint :refer [print-table]]
+            [clojure.data.generators :as gen]
+            [clojure.edn :as edn]
+            [clojure.java.io :as io]
+            [clojure.pprint :as pprint]
+            [clojure.string :as str]
             [datomic.api :as d]
-            [simtest.main :as m]))
+            [simtest.main :as m])
+  (:import [org.apache.commons.math3.distribution ParetoDistribution]))
 
 (defn shopper-transitions
+  "This function returns a table of non-normalized Markov transition
+  probabilities. That just means that it shows the likelihood of
+  moving from one state to the next. The extra column for max-delay is
+  used within Causatum to randomize the timing of events.
+
+  The map argument to this function contains model parameters that can
+  come from the command line or from a model in the database."
   [{ext-search-rate     :search-engine-arrival-rate
     site-search-rate    :internal-search-rate
     search-success-rate :search-success-rate
@@ -46,17 +58,29 @@
      [:category        :home     (- base-rate search-success-rate site-search-rate 15) 16000]]))
 
 (defn edge-graph->causatum-tree
+  "Translate from the tabular format I like to the tree format that
+  Causatum uses."
   [m [from tos]]
   (assoc m from
          [(reduce (fn [v [f t w d]] (merge v {t {:weight w :delay [:random d]}})) {} tos)]))
 
 (defn state-transition-model
+  "Build the entire model as Causatum will use it. This combines the
+  transition probabilities with some sampling functions to generate
+  times."
   [model-parameters]
   {:graph (reduce edge-graph->causatum-tree {} (group-by first (shopper-transitions model-parameters)))
    :delay-ops {:constant (fn [rtime n] n)
                :random   (fn [rtime n] (inc (rand n)))}})
 
-(defn arrival-time [test-duration]
+(defn arrival-time
+  "Return the time T (in milliseconds from test start) at which
+  an agent will arrive.
+
+  This uniform distribution across the test time is an
+  oversimplification. It would be good to model arrival rates with a
+  more realistic distribution."
+  [test-duration]
   (int
    (rand
     (- test-duration 15000))))
@@ -65,46 +89,57 @@
   {:state :start
    :rtime (arrival-time test-duration)})
 
-(defn state-sequence [model-parameters test-duration]
+(defn state-sequence
+  "Return a single sequence of model states, paired with time (in
+  milliseconds from test start). The sequence ends when it reaches a
+  terminal state. That is a state with no probability of transition to
+  any other state."
+  [model-parameters test-duration]
   (es/event-stream
    (state-transition-model model-parameters)
    [(initial-state test-duration)]))
 
-
-; ----------------------------------------
-; Generators
-; ----------------------------------------
+;; ----------------------------------------
+;; Generators
+;; ----------------------------------------
 (def ^:private tlds ["com" "mil" "gov" "net" "org" "info" "de" "co.uk" "co.au" "ca" "fi"])
 
 (def email-address-parts #(gen/uniform 2 5))
 (def email-part-sizer    #(gen/uniform 3 30))
 
 (defn email-address
-  "Create a random email address. This does _not_ explore all possible RFC 822
-   formats, only a simplified subset of interesting cases."
+  "Create a random email address. This does _not_ explore all possible
+  RFC 822 formats, only a simplified subset of interesting cases."
   []
   (let [parts (reverse
                (cons (gen/rand-nth tlds)
                      (take (email-address-parts)
                            (repeatedly #(gen/symbol email-part-sizer)))))
         separators (cons \@ (repeat 5 \.))]
-    (string/join (butlast (interleave parts separators)))))
+    (str/join (butlast (interleave parts separators)))))
 
-; ----------------------------------------
-; Create Pareto-distributed products & cats
-; ----------------------------------------
+;; ----------------------------------------
+;; Create Pareto-distributed products & cats
+;; ----------------------------------------
 (defn pareto
+  "Create a distribution that we can use to simulate heavy traffic on
+  a 'hot' item or category. This is the classic 'long tail'
+  distribution for product purchases."
   [scale shape]
   (let [d (ParetoDistribution. scale shape)]
     (fn [] (.sample d))))
 
 (defn sampler
+  "Return a function that samples from the collection. Each call to
+  the arity-0 function will return a new sample, so it's clearly not a
+  pure function."
   [dist coll]
   (let [size (dec (count coll))]
     (fn []
       (nth coll (long (min (dist) size))))))
 
 (defn ingest
+  "Return the data structure from an EDN file."
   [f]
   (-> f
       io/resource
@@ -113,18 +148,26 @@
       edn/read-string))
 
 (defn category-sampler
+  "Return a function that samples from categories, using a
+  distribution that simulates traffic concentration on a few 'hot'
+  categories, but still has some activity spread across a wide variety
+  of other categories."
   [{:keys [category-pareto-index]}]
   (sampler (pareto 1 category-pareto-index)
            (ingest "shop/category.edn")))
 
 (defn product-sampler
+  "Return a function that samples from categories, using a
+  distribution that simulates traffic concentration on a few 'hot'
+  categories, but still has some activity spread across a wide variety
+  of other categories."
   [{:keys [product-pareto-index]}]
   (sampler (pareto 1 product-pareto-index)
            (ingest "shop/sku.edn")))
 
-; ----------------------------------------------------
-; Model creation
-; ----------------------------------------------------
+;; ----------------------------------------------------
+;; Model creation
+;; ----------------------------------------------------
 (def default-model-parameters
   {:search-engine-arrival-rate 75
    :internal-search-rate       60
@@ -135,6 +178,7 @@
    :category-pareto-index      1})
 
 (defn model-entity
+  "Return a Datomic entity map for a model"
   [name model-parameters]
   (merge model-parameters
          {:db/id      (d/tempid :model)
@@ -142,10 +186,15 @@
           :model/type :model.type/shopping}))
 
 (defn create-model!
+  "Create a model in Datomic."
   ([conn name]
      (create-model! conn name default-model-parameters))
   ([conn name model-parameters]
      @(d/transact conn [(model-entity name model-parameters)])))
+
+;; ----------------------------------------
+;; CLI and helpers
+;; ----------------------------------------
 
 (defn model-for-name
   "Return the model entity that corresponds to model-name."
@@ -173,6 +222,7 @@
     (keyword s)))
 
 (defmethod m/run-command :make-model
+  "As invoked from the command line, make a new model."
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
   (if (empty? model-name)
     (m/argument-error (str "make-model requires a model name parameter"))
@@ -181,12 +231,15 @@
       :ok)))
 
 (defmethod m/run-command :list-models
+  "As invoked from the command line, list models in the database"
   [_ {:keys [datomic-uri] :as opts} arguments]
   (let [conn (d/connect datomic-uri)]
-    (print-table (map (partial apply hash-map) (query-models (d/db conn))))
+    (pprint/print-table (map (partial apply hash-map) (query-models (d/db conn))))
     :ok))
 
 (defmethod m/run-command :list-model-parameters
+  "As invoked from the command line, list the parameters and values
+  for a model in the database."
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
   (let [conn      (d/connect datomic-uri)
         model     (model-for-name (d/db conn) model-name)]
@@ -195,10 +248,12 @@
           (into (d/touch model))
           (dissoc :db/id :model/name :model/type)
           pivot-map
-          print-table)
+          pprint/print-table)
       (m/argument-error (str "Model named '" model-name "' not found")))))
 
 (defmethod m/run-command :set-model-parameter
+  "As invoked from the command line, set the value of a parameter in
+  the database to the given value for the given model."
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
   (let [conn       (d/connect datomic-uri)
         model      (model-for-name (d/db conn) model-name)

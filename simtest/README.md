@@ -21,7 +21,7 @@ in `resources/simulant/schema.edn` and `resources/simtest.edn`
 
 ## The Model
 
-The model is expressed in simtest.model. There are three parts to the
+The model is expressed in `simtest.model`. There are three parts to the
 model itself:
 
 1. State transitions, represented as `shopper-transitions`. This
@@ -39,18 +39,26 @@ model itself:
 
 ## Generator
 
+The generator is cleverly named `simtest.generator`. It divides
+roughly into three sections.
+
+1. Creating an activity stream for a single agent, based on the model.
+1. Building a population of agents and their activity streams.
+1. The command line interface functions and their helpers.
+
+
 ## Execution/Capture
+
+Not implemented yet.
 
 ## Validation
 
+Not implemented yet.
 
-## Usage
-
-FIXME
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Cognitect, Inc.
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

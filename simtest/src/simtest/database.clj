@@ -64,8 +64,11 @@
     (m/missing-resource resource)))
 
 (defn bootstrap!
-  "Bootstraps schema the first time, and updates it with new entities all subsequent times.
-   WARNING: This does not account for updates to the simulant schema."
+  "Bootstraps schema the first time, and updates it with new entities
+  all subsequent times.
+
+  WARNING: This does not account for updates to the simulant schema,
+  only to your schema."
   [uri]
   (let [created? (d/create-database uri)
         conn (d/connect uri)]
@@ -75,6 +78,8 @@
           (load-schemata! conn schema-definition)))))
 
 (defmethod m/run-command :install-schema
+  "As invoked from the command line, perform the one-time schema
+  installation in a new database."
   [_ {datomic-uri :datomic-uri} arguments]
   (let [outcome (bootstrap! datomic-uri)]
     (if (every? #(= :ok %) (map :result (flatten outcome)))

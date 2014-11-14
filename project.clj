@@ -25,4 +25,5 @@
                                     datomic-free    "0.9.4899"
                                     simulant        "0.1.6"
                                     io.pedestal     "0.3.1"
-                                    causatum        "0.3.0"}})
+                                    causatum        "0.3.0"
+                                    commons-math3   "3.3"}})
