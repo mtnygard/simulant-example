@@ -5,13 +5,14 @@
 
   :dependencies [[org.clojure/clojure       _]
                  [org.clojure/clojurescript _ :scope "provided"]
-                 [ring                      "1.3.2"]
-                 [compojure                 "1.3.4"]
-                 [enlive                    "1.1.5"]
-                 [org.omcljs/om             _]
-                 [kioo                      _ :exclusions [com.facebook/react om]]
-                 [environ                   "1.0.0"]
-                 [leiningen                 "2.5.1"]]
+                 [ring                       "1.3.2"]
+                 [compojure                  "1.3.4"]
+                 [enlive                     "1.1.5"]
+                 [org.omcljs/om              _]
+                 [kioo                       _ :exclusions [com.facebook/react om]]
+                 [environ                    "1.0.0"]
+                 [com.cognitect/transit-cljs _]
+                 [com.cognitect/transit-clj  _]]
 
   :plugins [[lein-modules "0.3.9"]
             [lein-cljsbuild "1.0.6"]
@@ -36,7 +37,8 @@
                    :dependencies [[org.clojure/tools.nrepl "0.2.10"]
                                   [figwheel                _]
                                   [com.cemerick/piggieback "0.2.0"]
-                                  [weasel                  _]]
+                                  [weasel                  _]
+                                  [leiningen               "2.5.1"]]
 
                    :plugins [[lein-figwheel "0.3.3"]]
 

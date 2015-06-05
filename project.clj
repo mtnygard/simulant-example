@@ -23,6 +23,10 @@
                                   causatum         "0.3.0"
                                   commons-math3    "3.3"
 
+                                  ;; Interprocess communication
+                                  transit-cljs     "0.8.220"
+                                  transit-clj      "0.8.275"
+
                                   ;; For the UI
                                   io.pedestal      "0.4.0"
                                   clojurescript    "0.0-3308"
