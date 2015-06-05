@@ -2,7 +2,8 @@
   :description "Simulation test"
   :plugins        [[lein-modules "0.3.9"]
                    [lein-expand-resource-paths "0.0.1"]]
-  :dependencies   [[com.datomic/simulant             _]
+  :dependencies   [[com.datomic/datomic-free         _  :exclusions [org.clojure/clojure joda-time]
+                   [com.datomic/simulant             _]
                    [org.clojure/data.generators      _]
                    [org.clojure/tools.cli            _]
                    [org.craigandera/causatum         _]
