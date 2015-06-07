@@ -1,14 +1,13 @@
 (ns example-ui.service
   (:require [clojure.java.io :as io]
-            [cognitect.transit :as t]
-            [example-ui.dev :refer [is-dev? inject-devmode-html start-figwheel]]
+            [datomic.api :as d]
+            [example-ui.db :as db]
+            [example-ui.dev :refer [is-dev? inject-devmode-html]]
             [io.pedestal.http :as bootstrap]
-            [io.pedestal.http.body-params :as body-params]
-            [io.pedestal.http.ring-middlewares :as ring-middlewares]
-            [io.pedestal.http.route :as route]
             [io.pedestal.http.route.definition :refer [defroutes]]
             [net.cgrand.enlive-html :refer [deftemplate]]
-            [ring.util.response :as ring-resp]))
+            [ring.util.response :as ring-resp]
+            [simtest.model :as model]))
 
 (deftemplate main-page-view (io/resource "index.html") [] [:body] (if is-dev? inject-devmode-html identity))
 
@@ -16,21 +15,21 @@
   [request]
   (ring-resp/response (apply str (main-page-view))))
 
+(defn model-ids [db] (map last (model/query-models db)))
+
+(defn model-entities
+  [db]
+  (map #(db/e->m (d/entity db %)) (model-ids db)))
+
 (defn init
   [request]
-  (ring-resp/response {:models [{:model/name "high traffic"    :model/id 1}
-                                {:model/name "high conversion" :model/id 2}
-                                {:model/name "CCVS down"       :model/id 3}]}))
+  (ring-resp/response {:models (model-entities (:db request))}))
 
 (defroutes routes
-  ;; Defines "/" and "/about" routes with their associated :get handlers.
-  ;; The interceptors defined after the verb map (e.g., {:get home-page}
-  ;; apply to / and its children (/about).
-  [[["/" {:get index-page} ^:interceptors [bootstrap/html-body]]
-    ["/init"  {:get init} ^:interceptors [bootstrap/transit-body]]]])
+  [[["/" ^:interceptors [bootstrap/html-body] {:get index-page}
+     ^:interceptors [bootstrap/transit-body db/insert-datomic]
+     ["/init"  {:get init}]]]])
 
-;; Consumed by bar.server/create-server
-;; See bootstrap/default-interceptors for additional options you can configure
 (def service {:env :prod
               ::bootstrap/routes routes
 

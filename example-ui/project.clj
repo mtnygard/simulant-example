@@ -11,7 +11,6 @@
                  [org.slf4j/jul-to-slf4j         _]
                  [org.slf4j/jcl-over-slf4j       _]
                  [org.slf4j/log4j-over-slf4j     _]
-
                  [ring                           _]
                  [compojure                      "1.3.4"]
                  [enlive                         _]
@@ -54,7 +53,8 @@
                               :port 3449
                               :css-dirs ["resources/public/css"]}
 
-                   :env {:is-dev true}
+                   :env {:is-dev true
+                         :datomic-uri "datomic:free://localhost:4334/simulant-example"}
 
                    :cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]}}}}
 
