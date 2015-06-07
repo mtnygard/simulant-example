@@ -12,10 +12,7 @@
                           :navigation       [["Models"        :models]
                                              ["Simulations"   :sims]
                                              ["Results"       :results]
-                                             ["Investigation" :investigate]]
-                          :models           [{:model/name "high traffic"    :model/id 1}
-                                             {:model/name "high conversion" :model/id 2}
-                                             {:model/name "CCVS down"       :model/id 3}]}))
+                                             ["Investigation" :investigate]]}))
 
 (defn display [show]
   (if show
@@ -96,4 +93,4 @@
                            (put! tx-chan [tx-data root-cursor]))})
     (xhr/transit {:method      :get
                   :url         "/init"
-                  :on-complete #(om/transact! app-state (fn [_] %))})))
+                  :on-complete #(swap! app-state (fn [data] (merge % data)))})))

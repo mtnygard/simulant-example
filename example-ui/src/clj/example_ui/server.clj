@@ -1,34 +1,26 @@
 (ns example-ui.server
-  (:require [clojure.java.io :as io]
-            [compojure.core :refer [GET defroutes]]
-            [compojure.handler :refer [api]]
-            [compojure.route :refer [resources]]
-            [environ.core :refer [env]]
-            [example-ui.dev :refer [is-dev? inject-devmode-html start-figwheel]]
-            [net.cgrand.enlive-html :refer [deftemplate]]
-            [ring.adapter.jetty :refer [run-jetty]]
-            [ring.middleware.reload :as reload]))
+  (:gen-class)
+  (:require [io.pedestal.http :as server]
+            [example-ui.service :as service]))
 
-(deftemplate page (io/resource "index.html") [] [:body] (if is-dev? inject-devmode-html identity))
+(defonce runnable-service (server/create-server service/service))
 
-(defroutes routes
-  (resources "/")
-  (resources "/react" {:root "react"})
-  (GET "/*" req (page)))
+(defn run-dev
+  "The entry-point for 'lein run-dev'"
+  [& args]
+  (println "\nCreating your [DEV] server...")
+  (-> service/service
+      (merge {:env :dev
+              ::server/join? false
+              ::server/routes #(deref #'service/routes)
+              ::server/allowed-origins {:creds true :allowed-origins (constantly true)}})
+      server/default-interceptors
+      server/dev-interceptors
+      server/create-server
+      server/start))
 
-(def http-handler
-  (if is-dev?
-    (reload/wrap-reload (api #'routes))
-    (api routes)))
-
-(defn run [& [port]]
-  (defonce ^:private server
-    (do
-      (when is-dev? (start-figwheel))
-      (let [port (Integer. (or port (env :port) 10555))]
-        (print "Starting web server on port" port ".\n")
-        (run-jetty http-handler {:port port :join? false}))))
-  server)
-
-(defn -main [& [port]]
-  (run port))
+(defn -main
+  "The entry point for 'lein run'"
+  [& args]
+  (println "\nCreating your server...")
+  (server/start runnable-service))

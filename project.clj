@@ -29,10 +29,13 @@
 
                                   ;; For the UI
                                   io.pedestal      "0.4.0"
+                                  ring             "1.3.2"
                                   clojurescript    "0.0-3308"
-                                  kioo             "0.4.0"
                                   org.omcljs/om    "0.8.8"
                                   environ          "1.0.0"
                                   figwheel         "0.3.3"
                                   figwheel-sidecar "0.3.3"
-                                  weasel           "0.6.0"}})
+                                  weasel           "0.6.0"
+                                  ch.qos.logback   "1.1.2"
+                                  org.slf4j        "1.7.7"
+                                  enlive           "1.1.5"}})

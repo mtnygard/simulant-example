@@ -3,16 +3,22 @@
 
   :source-paths ["src/clj" "src/cljs"]
 
-  :dependencies [[org.clojure/clojure       _]
-                 [org.clojure/clojurescript _ :scope "provided"]
-                 [ring                       "1.3.2"]
-                 [compojure                  "1.3.4"]
-                 [enlive                     "1.1.5"]
-                 [org.omcljs/om              _]
-                 [kioo                       _ :exclusions [com.facebook/react om]]
-                 [environ                    "1.0.0"]
-                 [com.cognitect/transit-cljs _]
-                 [com.cognitect/transit-clj  _]]
+  :dependencies [[org.clojure/clojure            _]
+                 [org.clojure/clojurescript      _ :scope "provided"]
+                 [io.pedestal/pedestal.service   _]
+                 [io.pedestal/pedestal.jetty     _]
+                 [ch.qos.logback/logback-classic _ :exclusions [org.slf4j/slf4j-api]]
+                 [org.slf4j/jul-to-slf4j         _]
+                 [org.slf4j/jcl-over-slf4j       _]
+                 [org.slf4j/log4j-over-slf4j     _]
+
+                 [ring                           _]
+                 [compojure                      "1.3.4"]
+                 [enlive                         _]
+                 [org.omcljs/om                  _]
+                 [environ                        "1.0.0"]
+                 [com.cognitect/transit-cljs     _]
+                 [com.cognitect/transit-clj      _]]
 
   :plugins [[lein-modules "0.3.9"]
             [lein-cljsbuild "1.0.6"]
@@ -34,11 +40,12 @@
   :profiles {:dev {:repl-options {:init-ns example-ui.server
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
-                   :dependencies [[org.clojure/tools.nrepl "0.2.10"]
-                                  [figwheel                _]
-                                  [com.cemerick/piggieback "0.2.0"]
-                                  [weasel                  _]
-                                  [leiningen               "2.5.1"]]
+                   :dependencies [[org.clojure/tools.nrepl            "0.2.10"]
+                                  [figwheel                           _]
+                                  [com.cemerick/piggieback            "0.2.0"]
+                                  [weasel                             _]
+                                  [io.pedestal/pedestal.service-tools _]
+                                  [leiningen                          "2.5.1"]]
 
                    :plugins [[lein-figwheel "0.3.3"]]
 
