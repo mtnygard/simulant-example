@@ -14,6 +14,16 @@ will work with Datomic Pro as well.
 Everything interesting is under the `simtest` directory. You should cd
 into it right away.
 
+# One-time Setup
+
+Before we can get started, we need to set up some fake item and
+category data. In a real implementation, you would get this from the
+system under test. For our purposes, a big pile of fake data will
+suffice.
+
+1. Generate seed data          `lein run -m create-data`
+
+
 # Walkthrough
 
 1. Start Datomic with          `scripts/start-transactor.sh`
@@ -51,8 +61,8 @@ model itself:
 1. Category and item data. In a full system, this would either be
    extracted from the target system or pushed into it at simulation
    start. We've got a data generator that spoofs up a pile of
-   identifiers. Just load `repl.clj` in a REPL or via `lein run -m
-   repl`.
+   identifiers. You should have run this as part of the one-time
+   setup. If not, please go back and do that now.
 
 ## Generator
 
