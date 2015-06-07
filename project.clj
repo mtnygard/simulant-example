@@ -1,7 +1,7 @@
 (defproject com.datomic/simulant-example "0.1.0-SNAPSHOT"
   :description      "Example application and simulation"
   :plugins          [[lein-modules "0.3.11"]]
-  :modules          {:dirs       ["simtest"]
+  :modules          {:dirs       ["simtest", "example-ui"]
                      :inherited  {:repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"}}
                                   :dependencies [[org.clojure/clojure _]]
 

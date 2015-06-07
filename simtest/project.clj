@@ -1,4 +1,4 @@
-(defproject simtest "0.1.0-SNAPSHOT"
+(defproject com.cognitect/simtest "0.1.0-SNAPSHOT"
   :description "Simulation test"
   :plugins        [[lein-modules "0.3.9"]
                    [lein-expand-resource-paths "0.0.1"]]

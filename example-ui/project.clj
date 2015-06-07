@@ -1,4 +1,4 @@
-(defproject com.datomic/simulant-example-ui "0.1.0-SNAPSHOT"
+(defproject com.cognitect/simulant-example-ui "0.1.0-SNAPSHOT"
   :description "Demo UI for a simulation test"
 
   :source-paths ["src/clj" "src/cljs"]
@@ -18,7 +18,8 @@
                  [org.omcljs/om                  _]
                  [environ                        "1.0.0"]
                  [com.cognitect/transit-cljs     _]
-                 [com.cognitect/transit-clj      _]]
+                 [com.cognitect/transit-clj      _]
+                 [com.cognitect/simtest          "0.1.0-SNAPSHOT"]]
 
   :plugins [[lein-modules "0.3.9"]
             [lein-cljsbuild "1.0.6"]
