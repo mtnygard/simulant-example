@@ -1,0 +1,619 @@
+/*@import url(http://fonts.googleapis.com/css?family=Varela+Round);*/
+
+/* BASE STYLES
+   =======================================================================*/
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: /*"Varela Round",*/ "Helvetica Neue", helvetica, arial, sas-serif;
+  color: #333;
+  background: #f1f1f1;
+  font-size: 62.5%;
+  line-height: 1.2;
+}
+
+#root {
+  /*padding: 50px;*/
+}
+
+
+/* LAYOUT SPECIFIC
+   =======================================================================*/
+
+.topbar {
+  background: #363846;
+  color: #fff;
+}
+
+.topbar h1 {
+  padding: 10px;
+  font-weight: normal;
+}
+
+.filter {
+  font-size: 1.4em;
+  margin-bottom: 25px;
+  background: #5e6d81;
+  padding: 10px;
+}
+
+.filter .row {
+  margin: 0;
+}
+
+.chart {
+  background: #fff;
+  height: 300px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-weight: normal;
+  font-size: 1.8em;
+  padding-bottom: 10px;
+}
+
+.section-title .pill-tabs {
+  margin-left: 10px;
+}
+
+
+/* UTILITY
+   =======================================================================*/
+.failed {
+  color: #d85858;
+}
+
+/* SELECT & MULTISELECT LIST WIDGET
+   =======================================================================*/
+.select,
+.multiselect {
+  position: relative;
+  height: 36px;
+  list-style-type: none;
+  z-index: 1;
+}
+
+.select .title,
+.multiselect .title {
+  background: #fff;
+  display: block;
+  padding: 10px 40px 10px 10px;
+  border-radius: 6px;
+}
+
+.select .title:hover,
+.multiselect .title:hover {
+  cursor: pointer;
+}
+
+.select .options,
+.multiselect .options {
+  display: none;
+  padding: 10px;
+  background: #fff;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+  position: relative;
+  width: 100%;
+  border-radius: 0 0 6px 6px;
+  top: -7px;
+}
+
+.select .options li,
+.multiselect .options li {
+  font-size: .8em;
+  margin-bottom: 5px;
+  border-radius: 2px;
+  padding: 5px;
+  padding-left: 35px;
+  position: relative;
+}
+
+.multiselect .options li:last-child,
+.select .options li:last-child {
+  margin-bottom: 0;
+}
+
+.multiselect .options li.selected ,
+.select .options li.selected {
+  background: #f2f4f7;
+}
+
+.multiselect .options li.actionNew ,
+.select .options li.actionNew {
+  background: #f2f4f7;
+}
+
+.select .options li:hover,
+.multiselect .options li:hover {
+  background: #f2f4f7;
+  cursor: pointer;
+}
+
+.multiselect .options li.selected:hover,
+.select .options li.selected:hover {
+  background: #e7eaee;
+}
+
+.multiselect .options li.actionNew:hover,
+.select .options li.actionNew:hover {
+  background: #e7eaee;
+}
+
+.multiselect ul,
+.select ul {
+  list-style-type: none;
+}
+
+.multiselect:after,
+.select:after {
+  -webkit-font-smoothing: antialiased;
+  font-family: FontAwesome;
+  content: '\f107';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 42px;
+  text-align: center;
+  line-height: 42px;
+  color: ##5e6d81;
+  display: block;
+  font-size: 1.6em;
+}
+
+.multiselect:hover,
+.select:hover {
+  z-index: 100;
+}
+
+.multiselect:hover .options,
+.select:hover .options {
+  display: block;
+}
+
+.select .options li.selected:before {
+  content: "\f00c";
+  font-family: 'FontAwesome';
+  position: absolute;
+  left: 10px;
+}
+
+.select .options li.actionNew:before {
+  content: "\f055";
+  font-family: 'FontAwesome';
+  position: absolute;
+  left: 10px;
+}
+
+.multiselect .options li:before {
+  content: '\f10c';
+  font-family: 'FontAwesome';
+  color: #c1cfd9;
+  position: absolute;
+  left: 10px;
+}
+
+.multiselect .options li:hover:before {
+  color: #5e6d81;
+}
+
+.multiselect .options li.selected:before {
+  content: '\f058';
+  color: #1fbba6;
+}
+
+.multiselect .options li.actionNew:before {
+  content: '\f055';
+  color: #1fbba6;
+}
+
+
+/* RADIO LIST WIDGET
+   =======================================================================*/
+
+.radio {
+  list-style-type: none;
+}
+
+.radio li {
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  color: #c1cfd9;
+  margin-right: 15px;
+}
+
+.radio li:hover {
+  color: #dde6ec;
+  cursor: pointer;
+}
+
+.radio li:before {
+  content: '\f10c';
+  font-family: 'FontAwesome';
+  margin-right: 10px;
+}
+
+.radio li.selected {
+  color: #fff;
+}
+
+.radio li.selected:before {
+  content: '\f192';
+}
+
+/* STATS
+   =======================================================================*/
+.stat .label {
+  text-transform: uppercase;
+  display: block;
+  font-size: 1.4em;
+}
+
+.stat .value {
+  font-size: 4.8em;
+  font-weight: 100;
+}
+
+
+/* PILL TABS
+   =======================================================================*/
+.pill-tabs {
+  display: inline-block;
+  list-style-type: none;
+  font-size: .75em;
+  vertical-align: middle;
+}
+
+.pill-tabs li {
+  display: inline-block;
+  border-radius: 50px;
+  padding: 5px 8px;
+  margin-right: 5px;
+  transition: background 0.2s;
+}
+
+.pill-tabs li:hover {
+  background: #fff;
+  cursor: pointer;
+}
+
+.pill-tabs li.active {
+  background: rgba(0,0,0,0.1);
+}
+
+.pill-tabs li.active:hover {
+  cursor: default;
+}
+
+
+/* BADGE NOTIFICATIONS
+   =======================================================================*/
+.badge {
+  border-radius: 50px;
+  padding: 3px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: .6em;
+  font-weight: bold;
+}
+
+.badge.error {
+  background: #d85858;
+  color: #fff;
+}
+
+
+/* INSPECTOR
+   =======================================================================*/
+.inspector .menu {
+  font-size: 1.4em;
+  /*display: inline-block;*/
+  height: 500px;
+  overflow-y: scroll;
+  vertical-align: top;
+  /*float: left;*/
+}
+
+.inspector .menu li {
+  padding: 10px 30px 10px 10px;
+  border-bottom: 1px solid #ccc;
+  transition: background 0.2s ease-in;
+}
+
+.inspector .menu li:hover {
+  background: rgba(255,255,255,0.65);
+  cursor: pointer;
+}
+
+.inspector .menu li.active {
+  background: #fff;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+}
+
+.inspector .menu li.active:hover {
+  cursor: default;
+}
+
+.inspector .details {
+  vertical-align: top;
+  padding: 20px;
+  background: #fff;
+  width: 760px;
+  min-height: 400px;
+  font-size: 1.4em;
+  border-radius: 0 6px 6px 0;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.inspector .details .group {
+  list-style-type: none;
+  margin-left: 15px;
+}
+
+.inspector .details .group li {
+  margin-bottom: 10px;
+  margin-left: 20px;
+  line-height: 1.2;
+}
+
+.inspector .details .group li:first-child:before {
+  font-family: 'FontAwesome';
+  content: '\f0dd';
+  margin-right: 10px;
+  color: #5e6d81;
+  font-size: 1.2em;
+}
+
+.inspector .details .group li:first-child {
+  margin-left: 0;
+}
+
+
+/* LOADING ANIMATION
+   ======================================================================*/
+.loading {
+  border-bottom: 6px solid #ebebeb;
+  border-left: 6px solid #ebebeb;
+  border-right: 6px solid #14b9d6 ;
+  border-top: 6px solid #14b9d6 ;
+  border-radius: 100%;
+  height: 20px;
+  width: 20px;
+  -webkit-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes "spin" {
+ from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+ }
+ to {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+ }
+
+}
+
+@-webkit-keyframes "spin" {
+ from {
+   -webkit-transform: rotate(0deg);
+   transform: rotate(0deg);
+ }
+ to {
+   -webkit-transform: rotate(359deg);
+   transform: rotate(359deg);
+ }
+
+}
+
+/* ICON FONT AWESOME :: http://fontawesome.io/
+   =======================================================================*/
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../icons/fontawesome-webfont.eot?v=4.0.3');
+  src: url('../icons/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../icons/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../icons/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../icons/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Graph Styles
+   ======================================================================*/
+
+.graph {
+  width: 100%;
+  height: 300px;
+}
+
+.graph text {
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+.graph .column rect {
+  transition: opacity 0.2s ease;
+  fill: #eaedf1;
+}
+
+.graph .column:hover {
+  cursor: pointer;
+}
+
+.graph .column:hover .failed rect {
+  fill: #bf4848;
+}
+
+.graph .column text {
+  fill: #c1cfd9;
+}
+
+.graph .failed rect,
+.graph .failed text {
+ fill: #d85858;
+}
+
+.graph.selected .column {
+  opacity: 0.2;
+}
+
+.graph.selected .column:hover {
+  opacity: 0.75;
+}
+
+.graph.selected .column .failed rect {
+  opacity: 0.35;
+}
+
+.graph.selected .column.selected .failed rect {
+  opacity: 1;
+}
+
+.graph.selected .column.selected,
+.graph.selected .column.selected:hover {
+  opacity: 1;
+  position: relative;
+}
+
+.graph.selected .column.selected .total rect,
+.graph .column:hover .total rect {
+  fill: #dbdfe4;
+}
+
+.graph.selected .column.selected:hover .failed rect {
+  fill: #d85858;
+}
+
+.graph.selected .column.selected:after {
+  content: '';
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  bottom: -40px;
+  height: 5px;
+  background: #5e6d81;
+}
+
+.graph .axis text {
+  font: 12px  "Helvetica Neue", helvetica, arial;
+  fill: #adbcc6;
+}
+
+.graph .x.axis path,
+.graph .x.axis line {
+  display: none;
+}
+
+
+/* MEDIA QUERIES
+   ======================================================================*/
+
+@media only screen and (min-width: 960px) and (max-width: 1160px) {
+  .inspector .details {
+    width: 640px;
+  }
+  .select:after,
+  .multiselect:after {
+    font-size: 1.4em;
+    height: 37px;
+    line-height: 37px;
+    width: 37px;
+  }
+  .select .title,
+  .multiselect .title {
+    font-size: .8em;
+  }
+  .select .options,
+  .multiselect .options {
+    font-size: .8em;
+    width: 250px;
+  }
+  .radio li {
+    font-size: .8em;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+  .inspector .details {
+    width: 510px;
+  }
+  .select:after,
+  .multiselect:after {
+    font-size: 1.2em;
+    height: 32px;
+    line-height: 32px;
+    width: 32px;
+  }
+  .select .title,
+  .multiselect .title {
+    font-size: .55em;
+  }
+  .select .options,
+  .multiselect .options {
+    font-size: .65em;
+    width: 200px;
+  }
+  .radio li {
+    font-size: .55em;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .column3 .stat {
+    width: 25%  !important;
+  }
+  .inspector .menu {
+    height: auto;
+    position: relative;
+  }
+  .inspector .menu li:after {
+    -webkit-font-smoothing: antialiased;
+    font-family: FontAwesome;
+    content: '\f107';
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    text-align: center;
+    color: ##5e6d81;
+    display: block;
+    font-size: 1.6em;
+  }
+  .inspector .menu:hover {
+    background: rgba(255,255,255,0.35);
+    height: 150px;
+    overflow-y: auto;
+  }
+  .inspector .menu:hover li {
+    display: block;
+  }
+  .inspector .menu li {
+    display: none;
+  }
+  .inspector .menu li.active {
+    display: block;
+    border-radius: 6px;
+  }
+  .inspector .details {
+    width: 100%;
+    border-radius: 6px;
+  }
+}

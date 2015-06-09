@@ -1,10 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <title>Simulant Example</title>
+    <link rel="stylesheet" href="css/1140.css" media="screen" type="text/css"/>
+    <link rel="stylesheet" href="css/screen.css" media="screen"
+          type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/css/custom.css" media="screen"/>
   </head>
   <body>
-     <script src="/js/app.js" type="text/javascript"></script>
-  </body>
+    <script src="/js/app.js" type="text/javascript"></script>
+    <div id="root">
+      <div class="topbar">
+        <h1>Simulant Example</h1>
+      </div>
+      <div class="filter">
+        <div class="container12">
+          <div class="row">
+            <div class="column3" id="modelsList">
+              <ul class="multiselect">
+                <li class="title">Models</li>
+                <li class="options">
+                  <ul>
+                    <li class="selected">All Models</li>
+                    <li>i-d3adb33</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="column3" id="scriptsList">
+              <ul class="multiselect">
+                <li class="title">All Scripts</li>
+                <li class="options">
+                  <ul>
+                    <li class="selected">All Scripts</li>
+                    <li class="selected">When blowing your mind</li>
+                    <li>When eating a marshmallow</li>
+                    <li>When tasting Bacon</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="column3">
+              <ul class="multiselect">
+                <li class="title">All Captures</li>
+                <li class="options">
+                  <ul>
+                    <li class="selected">All Scenarios</li>
+                    <li class="selected">When blowing your mind</li>
+                    <li>When eating a marshmallow</li>
+                    <li>When tasting Bacon</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="column3">
+              <ul class="select">
+                <li class="title">Today</li>
+                <li class="options">
+                  <ul>
+                    <li class="selected">Today</li>
+                    <li>Last Week</li>
+                    <li>Last Month</li>
+                    <li>Last Year</li>
+                    <li>Custom Date</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container12">
+        <div class="row">
+          <div id="sum-of-totals" class="column3">
+          </div>
+          <div id="sum-of-failures" class="column3">
+          </div>
+          <div id="sum-of-successes" class="column3">
+          </div>
+          <div class="column3">
+            <div class="stat">
+              <span class="label">Next Test At</span>
+              <span class="value">2:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column12 chart">
+            <div id="d3-canvas"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column12">
+            <h3 class="section-title">
+              Test Scenarios
+              <div style="display:inline;" id="description-selector">
+                <ul class="pill-tabs">
+                  <li class="active">
+                    <span class="error badge">126</span>
+                    Errors
+                  </li>
+                  <li>Succeeded</li>
+                </ul>
+              </div>
+            </h3>
+          </div>
 
+          <div id="description-labels" class="inspector">
+            <div id="item-list">
+              <ul class="menu column4 omega">
+                <li class="active">capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+                <li>capture item: Unknown :item/type (1)</li>
+              </ul>
+            </div>
+            <div id="item-details" class="details column8 alpha omega">
+              <ul class="group">
+                <li>every time I find belly button lint (1)</li>
+                <ul class="group">
+                  <li>BellyButtonLint cleans all belly buttons (0/1)</li>
+                  <li>Doc: BellyButtonLint should clean out someone's belly button, they might get distracted.</li>
+                </ul>
+                <ul class="group">
+                  <li class="failed">1 Failure</li>
+                  <ul class="group">
+                    <li>123456789012345</li>
+                    <ul class="group">
+                      <li>capture item: Unknown :item/type:</li>
+                      <li>[ ]</li>
+                    </ul>
+                    <li>0 Successes</li>
+                  </ul>
+                </ul>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

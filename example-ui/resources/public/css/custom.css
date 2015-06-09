@@ -1,0 +1,28 @@
+  .bar {
+    fill-opacity: .6;
+    fill: #1f77b4;
+  }
+
+  .bar0 {
+    fill-opacity: .6;
+    fill: #e377c2;
+  }
+
+  .bar:hover {
+    fill: brown;
+  }
+
+  .axis {
+    font: 10px sans-serif;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+  .x.axis path {
+    display: none;
+  }

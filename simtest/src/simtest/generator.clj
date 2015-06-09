@@ -171,6 +171,12 @@
          [?mid :model/name  ?mn]]
        db "Type" "DB ID" "Model Name" "Duration" "# Agents"))
 
+(defn activities
+  [db]
+  (d/q '[:find (pull ?id [{:test/type [:db/ident]} :db/id :test/duration :test/visitor-count])
+         :where [?id :test/type]]
+       db))
+
 (defmethod m/run-command :make-activity
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
   (let [conn  (d/connect datomic-uri)]

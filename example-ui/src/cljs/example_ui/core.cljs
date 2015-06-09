@@ -64,33 +64,24 @@
     (set! (.-value model-id-el) "")
     (set! (.-value model-name-el) "")))
 
-(defn models-view [app owner]
+(defn sim-item-multiselect [app owner title create-title app-key label-key]
   (reify
     om/IRender
     (render [_]
-      (dom/div #js {:id "models"}
-               (dom/h2 nil "Models")
-               (apply dom/ul nil
-                      (map
-                       #(om/build editable % {:opts {:edit-key :model/name}})
-                       (:models app)))
-               (dom/div nil
-                        (dom/label nil "ID:")
-                        (dom/input #js {:ref "model-id"})
-                        (dom/label nil "Name:")
-                        (dom/input #js {:ref "model-name"})
-                        (dom/button #js {:onClick (fn [e] (create-model (:models app) owner))}
-                                    "Add"))))))
+      (dom/ul #js {:className "multiselect"}
+              (dom/li #js {:className "title"} title)
+              (dom/li #js {:className "options"}
+                      (apply dom/ul nil
+                             (dom/li #js {:className "actionNew"} create-title)
+                             (map #(dom/li nil (get % label-key)) (get app app-key []))))))))
+
+(defn models-list [app owner] (sim-item-multiselect app owner "All Models" "New model" :models :model/name))
+(defn scripts-list [app owner] (sim-item-multiselect app owner "All scripts" "New script" :scripts :db/id))
 
 (defn main
   []
-  (let [tx-chan (chan)
-        tx-pub-chan (async/pub tx-chan (fn [_] :txs))]
-    (om/root models-view app-state
-             {:target    (.-body js/document)
-              :shared    {:tx-chan tx-pub-chan}
-              :tx-listen (fn [tx-data root-cursor]
-                           (put! tx-chan [tx-data root-cursor]))})
-    (xhr/transit {:method      :get
-                  :url         "/init"
-                  :on-complete #(swap! app-state (fn [data] (merge % data)))})))
+  (om/root models-list  app-state {:target (. js/document getElementById "modelsList")})
+  (om/root scripts-list app-state {:target (. js/document getElementById "scriptsList")})
+  (xhr/transit {:method      :get
+                :url         "/init"
+                :on-complete #(swap! app-state (fn [data] (merge % data)))}))

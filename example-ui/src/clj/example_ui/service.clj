@@ -7,6 +7,7 @@
             [io.pedestal.http.route.definition :refer [defroutes]]
             [net.cgrand.enlive-html :refer [deftemplate]]
             [ring.util.response :as ring-resp]
+            [simtest.generator :as generator]
             [simtest.model :as model]))
 
 (deftemplate main-page-view (io/resource "index.html") [] [:body] (if is-dev? inject-devmode-html identity))
@@ -15,15 +16,19 @@
   [request]
   (ring-resp/response (apply str (main-page-view))))
 
-(defn model-ids [db] (map last (model/query-models db)))
-
 (defn model-entities
   [db]
-  (map #(db/e->m (d/entity db %)) (model-ids db)))
+  (map first (model/models db)))
+
+(defn script-entities
+  [db]
+  (map first (generator/activities db)))
 
 (defn init
   [request]
-  (ring-resp/response {:models (model-entities (:db request))}))
+  (let [db (:db request)]
+    (ring-resp/response {:models (model-entities db)
+                         :scripts (script-entities db)})))
 
 (defroutes routes
   [[["/" ^:interceptors [bootstrap/html-body] {:get index-page}

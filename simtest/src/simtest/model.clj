@@ -211,6 +211,13 @@
          [?tid :db/ident ?t]]
        db "Name" "Type" "DB ID"))
 
+(defn models
+  [db]
+  (d/q '[:find (pull ?id [*])
+         :where
+         [?id :model/type]]
+       db))
+
 (defn pivot-map
   [m]
   (map (fn [[k v]] {:key k :value v}) m))
