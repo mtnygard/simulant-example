@@ -18,7 +18,7 @@
                  [environ                        "1.0.0"]
                  [com.cognitect/transit-cljs     _]
                  [com.cognitect/transit-clj      _]
-                 [com.cognitect/simtest          "0.1.0-SNAPSHOT"]]
+                 [com.cognitect/simtest          "0.1.0-SNAPSHOT" :exclusions [org.slf4j/slf4j-nop]]]
 
   :plugins [[lein-modules "0.3.9"]
             [lein-cljsbuild "1.0.6"]
@@ -27,6 +27,8 @@
   :min-lein-version "2.5.0"
 
   :uberjar-name "simulant-example-ui.jar"
+
+  :jvm-opts  ["-Dlogback.configurationFile=file:config/logback.xml"]
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                              :compiler {:output-to     "resources/public/js/app.js"
