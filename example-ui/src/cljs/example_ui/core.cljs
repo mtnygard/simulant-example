@@ -64,7 +64,7 @@
     (set! (.-value model-id-el) "")
     (set! (.-value model-name-el) "")))
 
-(defn sim-item-multiselect [app owner title create-title app-key label-key]
+(defn sim-item-multiselect [contents owner {:keys [title create-title label-key] :as opts}]
   (reify
     om/IRender
     (render [_]
@@ -73,15 +73,26 @@
               (dom/li #js {:className "options"}
                       (apply dom/ul nil
                              (dom/li #js {:className "actionNew"} create-title)
-                             (map #(dom/li nil (get % label-key)) (get app app-key []))))))))
+                             (map #(dom/li nil (get % label-key)) contents)))))))
 
-(defn models-list [app owner] (sim-item-multiselect app owner "All Models" "New model" :models :model/name))
-(defn scripts-list [app owner] (sim-item-multiselect app owner "All scripts" "New script" :scripts :db/id))
+(defn filter-bar
+  [app owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div #js {:className "filter"}
+               (dom/div #js {:className "container12"}
+                        (dom/div #js {:className "row"}
+                                 (dom/div #js {:className "column3"}
+                                          (om/build sim-item-multiselect (:models app) {:opts {:title "All Models" :create-title "New model" :label-key :model/name}}))
+                                 (dom/div #js {:className "column3"}
+                                          (om/build sim-item-multiselect (:scripts app) {:opts {:title "All Scripts" :create-title "New script" :label-key :db/id}}))
+                                 (dom/div #js {:className "column3"}
+                                          (om/build sim-item-multiselect (:captures app) {:opts {:title "All Captures" :create-title "Run simulation" :label-key :db/id}}))))))))
 
 (defn main
   []
-  (om/root models-list  app-state {:target (. js/document getElementById "modelsList")})
-  (om/root scripts-list app-state {:target (. js/document getElementById "scriptsList")})
+  (om/root filter-bar   app-state {:target (. js/document getElementById "filterBar")})
   (xhr/transit {:method      :get
                 :url         "/init"
                 :on-complete #(swap! app-state (fn [data] (merge % data)))}))
