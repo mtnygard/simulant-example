@@ -15,6 +15,7 @@
                  [compojure                      "1.3.4"]
                  [enlive                         _]
                  [org.omcljs/om                  _]
+                 [kioo                           "0.4.0"]
                  [environ                        "1.0.0"]
                  [com.cognitect/transit-cljs     _]
                  [com.cognitect/transit-clj      _]

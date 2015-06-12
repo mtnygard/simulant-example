@@ -1,5 +1,7 @@
 (ns example-ui.core
-  (:require [om.core :as om :include-macros true]
+  (:require [kioo.om :as k :include-macros true]
+            [kioo.core :as kcore]
+            [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [figwheel.client :as figwheel :include-macros true]
             [cljs.core.async :as async :refer [put! chan <!]]
@@ -75,24 +77,34 @@
                              (dom/li #js {:className "actionNew"} create-title)
                              (map #(dom/li nil (get % label-key)) contents)))))))
 
-(defn filter-bar
+(k/defsnippet filter-element "design.html" [:#filterElement]
+  [{:keys [elements title create-title]}]
+  {[:li#all]         (kcore/content title)
+   [:li.actionNew]   (kcore/content create-title)
+   [:li.options :ul] (kcore/content (map (fn [o] (dom/li nil o)) elements))}
+  )
+
+(k/defsnippet filter-bar "design.html" [:#filterBar]
+  [{:keys [models scripts captures]}]
+  {[:.row] (kcore/substitute
+            (map filter-element
+                 [{:elements (map :model/name models)
+                   :title "All models"
+                   :create-title "New model"}
+                  {:elements (map :db/id scripts)
+                   :title "All scripts"
+                   :create-title "Generate script"}
+                  {:elements (map :db/id captures)
+                   :title "All captures"
+                   :create-title "Run simulation"}]))})
+
+(defn kioo-snippets
   [app owner]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/div #js {:className "filter"}
-               (dom/div #js {:className "container12"}
-                        (dom/div #js {:className "row"}
-                                 (dom/div #js {:className "column3"}
-                                          (om/build sim-item-multiselect (:models app) {:opts {:title "All Models" :create-title "New model" :label-key :model/name}}))
-                                 (dom/div #js {:className "column3"}
-                                          (om/build sim-item-multiselect (:scripts app) {:opts {:title "All Scripts" :create-title "New script" :label-key :db/id}}))
-                                 (dom/div #js {:className "column3"}
-                                          (om/build sim-item-multiselect (:captures app) {:opts {:title "All Captures" :create-title "Run simulation" :label-key :db/id}}))))))))
+  (om/component filter-bar))
 
 (defn main
   []
-  (om/root filter-bar   app-state {:target (. js/document getElementById "filterBar")})
+  (om/root kioo-snippets app-state {:target (. js/document getElementById "filterBar")})
   (xhr/transit {:method      :get
                 :url         "/init"
                 :on-complete #(swap! app-state (fn [data] (merge % data)))}))

@@ -31,7 +31,7 @@
                                   io.pedestal      "0.4.0"
                                   ring             "1.3.2"
                                   clojurescript    "0.0-3308"
-                                  org.omcljs/om    "0.8.8"
+                                  org.omcljs/om    "0.9.0-SNAPSHOT"
                                   environ          "1.0.0"
                                   figwheel         "0.3.3"
                                   figwheel-sidecar "0.3.3"
