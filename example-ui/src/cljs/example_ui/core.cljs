@@ -2,6 +2,7 @@
   (:require [kioo.om :as k :include-macros true]
             [kioo.core :as kcore]
             [om.core :as om :include-macros true]
+            [om.next :as omn :include-macros true]
             [om.dom :as dom :include-macros true]
             [figwheel.client :as figwheel :include-macros true]
             [cljs.core.async :as async :refer [put! chan <!]]
@@ -101,6 +102,15 @@
 (defn kioo-snippets
   [app owner]
   (om/component filter-bar))
+
+
+(omn/defui
+  static IQuery
+  (query [_])
+  static IQueryParams
+  (params [_])
+
+  )
 
 (defn main
   []
