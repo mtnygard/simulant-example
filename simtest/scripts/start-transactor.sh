@@ -6,5 +6,5 @@ abspath() {
 }
 
 PROPS=$(abspath `dirname "$0"`/../transactor.properties)
-pushd ${DATOMIC_HOME:=~/work/datomic-free-0.9.5173}
+pushd ${DATOMIC_HOME:=~/work/datomic-free-0.9.5327}
 bin/transactor $PROPS
