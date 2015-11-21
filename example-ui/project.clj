@@ -43,6 +43,8 @@
   :profiles {:dev {:repl-options {:init-ns example-ui.server
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
+                   :source-paths ["test/clj" "test/cljs"]
+
                    :dependencies [[org.clojure/tools.nrepl            "0.2.12"]
                                   [figwheel                           _]
                                   [com.cemerick/piggieback            "0.2.1"]
