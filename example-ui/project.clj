@@ -12,11 +12,11 @@
                  [org.slf4j/jcl-over-slf4j       _]
                  [org.slf4j/log4j-over-slf4j     _]
                  [ring                           _]
-                 [compojure                      "1.3.4"]
+                 [compojure                      "1.4.0"]
                  [enlive                         _]
                  [org.omcljs/om                  _]
-                 [kioo                           "0.4.0"]
-                 [environ                        "1.0.0"]
+                 [kioo                           "0.4.1"]
+                 [environ                        "1.0.1"]
                  [com.cognitect/transit-cljs     _]
                  [com.cognitect/transit-clj      _]
                  [com.cognitect/simtest          "0.1.0-SNAPSHOT" :exclusions [org.slf4j/slf4j-nop]]]
@@ -43,12 +43,12 @@
   :profiles {:dev {:repl-options {:init-ns example-ui.server
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
-                   :dependencies [[org.clojure/tools.nrepl            "0.2.10"]
+                   :dependencies [[org.clojure/tools.nrepl            "0.2.12"]
                                   [figwheel                           _]
-                                  [com.cemerick/piggieback            "0.2.0"]
+                                  [com.cemerick/piggieback            "0.2.1"]
                                   [weasel                             _]
                                   [io.pedestal/pedestal.service-tools _]
-                                  [leiningen                          "2.5.1"]]
+                                  [leiningen                          "2.5.3"]]
 
                    :plugins [[lein-figwheel "0.3.3"]]
 

@@ -15,11 +15,11 @@
 
                                   :aliases      {"all" ^:displace ["do" "clean," "test," "install"]}}
                      :subprocess nil
-                     :versions   {clojure          "1.7.0-rc1"
+                     :versions   {clojure          "1.7.0"
                                   data.generators  "0.1.2"
                                   tools.cli        "0.3.1"
-                                  datomic-free     "0.9.5173"
-                                  simulant         "0.1.6"
+                                  datomic-free     "0.9.5327"
+                                  simulant         "0.1.8"
                                   causatum         "0.3.0"
                                   commons-math3    "3.3"
 
