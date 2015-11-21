@@ -112,10 +112,11 @@
 (defn- test-instance
   "Build a test instance from a model and a test definition.
    This should return a datomic entity map."
-  [model test]
+  [model test codebase]
   (assoc test
-    :test/type      :test.type/shopping
-    :model/_tests   (u/e model)))
+    :test/type       :test.type/shopping
+    :model/_tests    (u/e model)
+    :source/codebase (u/e codebase)))
 
 (defn- model-parameters
   "Do any conversion needed from the database format
@@ -131,8 +132,9 @@
 ;; test defines the agents and their activity streams
 (defmethod sim/create-test :model.type/shopping
   [conn model test-def]
-  (let [test       (test-instance model test-def)
-        test-txr   (d/transact conn [test])
+  (let [codebase   (u/gen-codebase)
+        test       (test-instance model test-def codebase)
+        test-txr   (d/transact conn [test codebase])
         test-real  (u/tx-ent @test-txr (u/e test))
         model      (-> model model-parameters attach-samplers)]
     (doseq [agent-id (repeatedly (:test/visitor-count test) #(d/tempid :test))]
@@ -170,12 +172,6 @@
          [?mid :model/tests ?id]
          [?mid :model/name  ?mn]]
        db "Type" "DB ID" "Model Name" "Duration" "# Agents"))
-
-(defn activities
-  [db]
-  (d/q '[:find (pull ?id [{:test/type [:db/ident]} :db/id :test/duration :test/visitor-count])
-         :where [?id :test/type]]
-       db))
 
 (defmethod m/run-command :make-activity
   [_ {:keys [datomic-uri model-name] :as opts} arguments]
