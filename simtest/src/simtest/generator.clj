@@ -6,6 +6,10 @@
             [simulant.sim :as sim]
             [simulant.util :as u]))
 
+(defn- refresh
+  [db ent]
+  (d/entity db (:db/id ent)))
+
 ; ----------------------------------------
 ; Actions for a single event stream
 ; ----------------------------------------
@@ -139,7 +143,7 @@
         model      (-> model model-parameters attach-samplers)]
     (doseq [agent-id (repeatedly (:test/visitor-count test) #(d/tempid :test))]
       @(d/transact conn (m/dot (create-agent model test-real agent-id))))
-    test-real))
+    (refresh (d/db conn) test-real)))
 
 (defn empty-test
   [{:keys [number-of-visitors test-duration] :or
