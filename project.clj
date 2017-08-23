@@ -3,7 +3,7 @@
   :plugins          [[lein-modules "0.3.11"]]
   :modules          {:dirs       ["simtest", "example-ui"]
                      :inherited  {:repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"}}
-                                  :dependencies [[org.clojure/clojure _]]
+                                  :dependencies [[org.clojure/clojure "1.8.0"]]
 
                                   :license      {:name         "Eclipse Public License - v 1.0"
                                                  :url          "http://www.eclipse.org/legal/epl-v10.html"
@@ -15,7 +15,7 @@
 
                                   :aliases      {"all" ^:displace ["do" "clean," "test," "install"]}}
                      :subprocess nil
-                     :versions   {clojure          "1.7.0"
+                     :versions   {clojure          "1.8.0"
                                   data.generators  "0.1.2"
                                   tools.cli        "0.3.1"
                                   datomic-free     "0.9.5327"
