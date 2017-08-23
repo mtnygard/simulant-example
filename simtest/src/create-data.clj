@@ -1,4 +1,9 @@
 (ns create-data
+  "This namespace creates some sample data files that are used later when creating activities.
+   You only need to load this namespace one time to create the files,
+  but you do need to load this before trying to generate activity.
+
+   It just lets me avoid committing long meaningless text files to the repository."
   (:require [clojure.data.generators :as gen]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]))
