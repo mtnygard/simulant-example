@@ -141,11 +141,14 @@
 (defn ingest
   "Return the data structure from an EDN file."
   [f]
-  (-> f
-      io/resource
-      io/reader
-      slurp
-      edn/read-string))
+  (if-let [result (some-> f
+                          io/resource
+                          io/reader
+                          slurp
+                          edn/read-string)]
+    result
+    (throw (ex-info "Missing resource"
+                    (simtest.main/missing-resource "You probably need to load the namespace 'create-data' to build the test data files.")))))
 
 (defn category-sampler
   "Return a function that samples from categories, using a
