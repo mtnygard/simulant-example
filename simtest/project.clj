@@ -9,5 +9,4 @@
                    [org.craigandera/causatum         _]
                    [org.apache.commons/commons-math3 _]]
   :resource-paths ["resources"]
-  :repl-options   {:init (do (set! *print-length* 200) (set! *print-level* 15))}
   :main           simtest.cli)
